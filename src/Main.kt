@@ -1,12 +1,10 @@
-import kotlin.math.absoluteValue
-import kotlin.math.min
 import kotlin.math.pow
 
 const val p = 5
 const val q = 7
 const val n = p * q // 35
 const val eulerFunctionValue = (p - 1) * (q - 1) // 24
-const val e = 5 // 101
+val e = findCoprimeE(eulerFunctionValue) // 5
 
 
 
@@ -30,6 +28,24 @@ fun messageEncryption(message: Int, openKey: Pair<Int, Int>) : Int {
 
 fun messageDecryption(encryptedMessage: Int, closeKey: Pair<Int, Int>) : Int {
     return encryptedMessage.toDouble().pow(closeKey.first).toInt() % closeKey.second
+}
+
+fun gcd(a: Int, b: Int) : Int {
+    return if (b == 0) a else gcd(b, a % b)
+}
+
+fun findCoprimeE(eulerFunctionValue: Int) : Int {
+    var e = 2
+    while (e < eulerFunctionValue) {
+        if (areCoprime(e, eulerFunctionValue))
+            return e
+        e++
+    }
+    throw IllegalArgumentException("No coprime found")
+}
+
+fun areCoprime(a: Int, b: Int) : Boolean {
+    return gcd(a, b) == 1
 }
 
 fun euclidAlgorithm(e: Int, phi: Int): Int {
