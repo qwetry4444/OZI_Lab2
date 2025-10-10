@@ -1,6 +1,6 @@
 import kotlin.math.pow
 
-const val p = 5
+const val p = 11
 const val q = 7
 const val n = p * q // 35
 const val eulerFunctionValue = (p - 1) * (q - 1) // 24
@@ -9,25 +9,27 @@ val e = findCoprimeE(eulerFunctionValue) // 5
 
 
 fun main() {
-    val message = 28
-
     val d = euclidAlgorithm(e, eulerFunctionValue)
-
     val openKey = Pair(e, n)
     val closeKey = Pair(d, n)
 
-    val encryptedMessage = messageEncryption(message, openKey)
-    val decryptedMessage = messageDecryption(encryptedMessage, closeKey)
+    for (message in 0..100) {
+        println("message: $message")
 
-    println(decryptedMessage)
+        val encryptedMessage = messageEncryption(message, openKey)
+        val decryptedMessage = messageDecryption(encryptedMessage, closeKey)
+
+        println("decrypted: $decryptedMessage")
+        println("-------------------------")
+    }
 }
 
-fun messageEncryption(message: Int, openKey: Pair<Int, Int>) : Int {
-    return message.toDouble().pow(openKey.first.toDouble()).toInt() % openKey.second
+fun messageEncryption(message: Int, openKey: Pair<Int, Int>): Int {
+    return modPow(message, openKey.first, openKey.second)
 }
 
-fun messageDecryption(encryptedMessage: Int, closeKey: Pair<Int, Int>) : Int {
-    return encryptedMessage.toDouble().pow(closeKey.first).toInt() % closeKey.second
+fun messageDecryption(encryptedMessage: Int, closeKey: Pair<Int, Int>): Int {
+    return modPow(encryptedMessage, closeKey.first, closeKey.second)
 }
 
 fun gcd(a: Int, b: Int) : Int {
@@ -66,4 +68,22 @@ fun euclidAlgorithm(e: Int, phi: Int): Int {
     }
 
     return if (x0 < 0) x0 + phi else x0
+}
+
+
+fun modPow(base: Int, exp: Int, mod: Int): Int {
+    var result = 1L
+    var b = base.toLong() % mod
+    var e = exp
+    val m = mod.toLong()
+
+    while (e > 0) {
+        if (e % 2 == 1) {
+            result = (result * b) % m
+        }
+        b = (b * b) % m
+        e /= 2
+    }
+
+    return result.toInt()
 }
