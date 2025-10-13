@@ -1,17 +1,17 @@
-import kotlin.math.pow
+import java.math.BigInteger
 
 const val p = 11
 const val q = 7
-const val n = p * q // 35
-const val eulerFunctionValue = (p - 1) * (q - 1) // 24
-val e = findCoprimeE(eulerFunctionValue) // 5
+const val n = p * q // 77
+const val phi = (p - 1) * (q - 1) // 60
+val e = findCoprimeE(phi) // 7
 
 
 
 fun main() {
-    val d = euclidAlgorithm(e, eulerFunctionValue)
-    val openKey = Pair(e, n)
-    val closeKey = Pair(d, n)
+    val d = e.toBigInteger().modInverse(phi.toBigInteger()).toInt() // 43
+    val openKey = Pair(e, n) // (7, 77)
+    val closeKey = Pair(d, n) // (43, 77)
 
     for (message in 0..100) {
         println("message: $message")
@@ -36,10 +36,10 @@ fun gcd(a: Int, b: Int) : Int {
     return if (b == 0) a else gcd(b, a % b)
 }
 
-fun findCoprimeE(eulerFunctionValue: Int) : Int {
+fun findCoprimeE(phi: Int) : Int {
     var e = 2
-    while (e < eulerFunctionValue) {
-        if (areCoprime(e, eulerFunctionValue))
+    while (e < phi) {
+        if (areCoprime(e, phi))
             return e
         e++
     }
@@ -50,40 +50,18 @@ fun areCoprime(a: Int, b: Int) : Boolean {
     return gcd(a, b) == 1
 }
 
-fun euclidAlgorithm(e: Int, phi: Int): Int {
-    var a = phi
-    var b = e
-    var x0 = 0
-    var x1 = 1
-
-    while (b != 0) {
-        val q = a / b
-        val r = a % b
-        val temp = x0 - q * x1
-
-        a = b
-        b = r
-        x0 = x1
-        x1 = temp
-    }
-
-    return if (x0 < 0) x0 + phi else x0
-}
-
-
 fun modPow(base: Int, exp: Int, mod: Int): Int {
-    var result = 1L
-    var b = base.toLong() % mod
+    var result = 1
+    var b = base % mod
     var e = exp
-    val m = mod.toLong()
 
     while (e > 0) {
         if (e % 2 == 1) {
-            result = (result * b) % m
+            result = (result * b) % mod
         }
-        b = (b * b) % m
+        b = (b * b) % mod
         e /= 2
     }
 
-    return result.toInt()
+    return result
 }
